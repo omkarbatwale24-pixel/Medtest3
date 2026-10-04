@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedBox by MakerHub</title>
+<style>
+:root{--bg:#eef2f9;--c:#fff;--tx:#18212f;--mu:#7b8aa0;--bd:#e0e6f0;--p:#5b6cf2;--p2:#8b5cf6;--ok:#10b981;--bad:#ef4444;--w:#f59e0b;--bl:#0ea5e9}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1521;--c:#182033;--tx:#e8edf7;--mu:#8190a8;--bd:#26304a}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:84px}
+header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:16px 18px 22px;border-radius:0 0 26px 26px}
+.hr{display:flex;justify-content:space-between;align-items:center}h1{font-size:1.15rem}.sm{font-size:.7rem;opacity:.8}
+.clk{font-size:1.7rem;font-weight:700;letter-spacing:1px;margin-top:8px}
+.ib{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:10px;padding:7px 10px;font-size:.95rem;cursor:pointer}
+select.ib{font-size:.8rem}select.ib option{color:#000}
+main{max-width:480px;margin:-12px auto 0;padding:0 14px}.tab{display:none}.tab.on{display:block;animation:f .3s}
+@keyframes f{from{opacity:0;transform:translateY(8px)}}
+.card{background:var(--c);border-radius:18px;padding:15px;margin-top:12px;box-shadow:0 4px 18px rgba(30,40,80,.08)}
+.lb{font-size:.65rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--mu);margin-bottom:8px}
+.big{font-size:1.5rem;font-weight:800}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.btn{border:0;border-radius:12px;padding:11px 14px;background:var(--p);color:#fff;font-weight:700;cursor:pointer;font-size:.85rem}
+.btn.w{width:100%;margin-top:10px}.btn.g{background:var(--ok)}.btn.r{background:var(--bad)}.btn.l{background:var(--bd);color:var(--tx)}
+input,select.f{width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font-size:.9rem;outline:none}
+.bar{height:9px;background:var(--bd);border-radius:9px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--ok);transition:width .5s}
+.dose{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd)}.dose:last-child{border:0}
+.bd{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:auto}.bd.T{background:#d1fae5;color:#047857}.bd.M{background:#fee2e2;color:#b91c1c}.bd.D{background:#fef3c7;color:#b45309}.bd.P{background:var(--bd);color:var(--mu)}
+.alert{display:none;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;text-align:center;font-weight:800;animation:pu 1s infinite}.alert.on{display:block}
+@keyframes pu{50%{transform:scale(1.02)}}.gl{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.gl span{font-size:1.2rem;opacity:.25}.gl span.f{opacity:1}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}.cg b{font-size:.65rem;color:var(--mu)}
+.cd{aspect-ratio:1;border-radius:11px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer}
+.cd.T{background:#d1fae5;color:#047857}.cd.H{background:#fef3c7;color:#b45309}.cd.M{background:#fee2e2;color:#b91c1c}.cd.t{outline:2px solid var(--p)}.cd small{font-size:.7rem}
+.ev{display:flex;gap:10px;padding:7px 0;font-size:.85rem;border-bottom:1px solid var(--bd)}.ev small{color:var(--mu);margin-left:auto}
+.wk{display:flex;align-items:flex-end;gap:6px;height:70px}.wk div{flex:1;background:linear-gradient(var(--p),var(--p2));border-radius:6px 6px 0 0;min-height:3px}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--c);display:flex;justify-content:space-around;padding:8px 0 12px;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+nav button{background:0;border:0;color:var(--mu);font-size:.65rem;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}nav button span{font-size:1.3rem}nav button.on{color:var(--p);font-weight:700}
+.toast{position:fixed;top:14px;left:50%;transform:translate(-50%,-90px);background:var(--tx);color:var(--bg);padding:11px 18px;border-radius:30px;font-size:.85rem;font-weight:600;transition:.4s;z-index:99;max-width:92%;text-align:center}.toast.on{transform:translate(-50%,0)}
+.md{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:50}.md.on{display:flex}.sh{background:var(--c);width:100%;max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px;max-width:480px;margin:0 auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}label{font-size:.68rem;color:var(--mu);font-weight:700;display:block;margin:8px 0 3px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--bad);display:inline-block;margin-right:5px}.dot.ok{background:#4ade80}
+
+header{position:relative;overflow:hidden}
+header::after{content:'\271A';position:absolute;right:-14px;top:-18px;font-size:7.5rem;color:rgba(255,255,255,.1);line-height:1;pointer-events:none}
+.gr{font-size:1.05rem;font-weight:800;margin-top:12px;position:relative}
+.gr small{display:block;font-size:.7rem;font-weight:500;opacity:.85}
+.ecg{position:absolute;left:0;right:0;bottom:6px;width:100%;height:34px;pointer-events:none}
+.ecg path{fill:none;stroke:rgba(255,255,255,.55);stroke-width:2;stroke-linejoin:round;stroke-dasharray:420;stroke-dashoffset:420;animation:ec 3.2s linear infinite}
+@keyframes ec{to{stroke-dashoffset:-420}}
+.card{position:relative;overflow:hidden}
+.card::after{content:'\271A';position:absolute;right:8px;bottom:-14px;font-size:3.4rem;color:var(--p);opacity:.05;pointer-events:none}
+.clk{position:relative}
+.mh{display:inline-flex;align-items:center;gap:5px;margin-top:3px;padding:2px 9px 2px 7px;border-radius:20px;background:rgba(255,255,255,.18);font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.ft{text-align:center;padding:22px 0 6px;font-size:.72rem;letter-spacing:1.5px;color:var(--mu)}.ft b{color:var(--tx)}
+</style>
+</head>
+<body>
+
+<header>
+<div class="hr">
+<div><h1>💊 MedBox</h1><div class="mh">By MakerHub</div><div class="sm"><span class="dot" id="dt"></span><span id="cs"></span></div></div>
+<div><select class="ib" id="lg" onchange="setL(this.value)"><option value="0">EN</option><option value="1">हिं</option><option value="2">मरा</option></select> <button class="ib" onclick="openA()">⚙</button></div>
+</div>
+<div class="gr" id="gr"></div><div class="clk" id="clk">--:--</div><div class="sm" id="dtx"></div>
+<svg class="ecg" viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 22H90L100 22L110 7L122 36L134 13L142 22H230L240 22L250 5L262 38L274 15L282 22H400"/></svg>
+</header>
+
+<main>
+<div class="card row" style="padding:10px"><input id="ip" value="192.168.4.1" style="flex:1"><button class="btn" onclick="connect(1)" data-i="conn"></button></div>
+
+<div class="tab on" id="t0">
+<div class="card alert" id="al"><div id="alt"></div><button class="btn g w" onclick="ack()">✓ <span data-i="taken"></span></button></div>
+<div class="card"><div class="lb" data-i="next"></div><div class="big" id="nx">--</div><div class="sm" id="nx2" style="color:var(--mu)"></div></div>
+<div class="card"><div class="lb" data-i="today"></div><div id="td"></div></div>
+<div class="card"><div class="row"><div class="lb" data-i="water"></div><b id="wc"></b></div><div class="gl" id="gl"></div><button class="btn w" style="background:var(--bl)" onclick="drink()">💧 <span data-i="drank"></span></button></div>
+<div class="card"><div class="row"><div class="lb" data-i="left"></div><b id="lf"></b></div><div class="bar"><i id="lb"></i></div><div id="lw" style="color:var(--bad);font-size:.8rem;margin-top:6px;font-weight:700"></div></div>
+<div class="card"><div class="lb">🏃 <span data-i="tips"></span></div><div id="tp" style="line-height:1.5;cursor:pointer" onclick="newTip(1)"></div><div class="sm" style="color:var(--mu);margin-top:6px" data-i="disc"></div></div>
+</div>
+
+<div class="tab" id="t1"><div class="card"><div class="row"><button class="btn l" onclick="mv(-1)">◀</button><b id="mt"></b><button class="btn l" onclick="mv(1)">▶</button></div><div class="cg" id="cg" style="margin-top:10px"></div></div><div class="card" id="cdet"></div></div>
+
+<div class="tab" id="t2"><div class="card"><div class="g2"><div><div class="lb" data-i="adh"></div><div class="big" id="ad">--</div></div><div><div class="lb" data-i="streak"></div><div class="big" id="sk">--</div></div></div><div class="wk" id="wk" style="margin-top:12px"></div></div><div class="card" id="hl"></div></div>
+
+<div class="tab" id="t3"><div class="card"><div class="g2"><div><label data-i="bp"></label><input id="hb" placeholder="120/80"></div><div><label data-i="sugar"></label><input id="hs" type="number" placeholder="mg/dL"></div><div><label data-i="wt"></label><input id="hw" type="number" step=".1" placeholder="kg"></div><div><label data-i="mood"></label><select class="f" id="hm"><option>😊</option><option>😐</option><option>😟</option></select></div></div><button class="btn w" onclick="addH()" data-i="add"></button></div><div class="card" id="hv"></div></div>
+<div class="ft"><b>MakerHub</b></div>
+</main>
+
+<nav>
+<button class="on" onclick="tab(0)"><span>🏠</span><i data-i="home" style="font-style:normal"></i></button>
+<button onclick="tab(1)"><span>📅</span><i data-i="cal" style="font-style:normal"></i></button>
+<button onclick="tab(2)"><span>📊</span><i data-i="hist" style="font-style:normal"></i></button>
+<button onclick="tab(3)"><span>❤</span><i data-i="health" style="font-style:normal"></i></button>
+</nav>
+
+<div class="toast" id="ts"></div>
+
+<div class="md" id="md" onclick="if(event.target==this)this.classList.remove('on')">
+<div class="sh">
+<div id="lgn"><div class="lb">🔒 Admin</div><input id="pn" type="password" inputmode="numeric" placeholder="PIN" onkeydown="if(event.key==='Enter')login()"><button class="btn w" onclick="login()" data-i="login"></button></div>
+<div id="adm" style="display:none">
+<div class="lb">⚙ Admin</div>
+<label data-i="pname"></label><input class="f" id="apn" maxlength="20" placeholder="Patient name">
+<label data-i="doses"></label><select class="f" id="an" onchange="adRows()"><option>1</option><option>2</option><option>3</option><option>4</option></select><div id="ar"></div>
+<div class="g2"><div><label data-i="slots"></label><select class="f" id="asl"><option>8</option><option>16</option></select></div><div><label data-i="mwin"></label><input id="amw" type="number"></div></div>
+<div class="g2"><div><label data-i="rgap"></label><select class="f" id="arg"><option value="5">5 min</option><option value="10">10 min</option></select></div><div><label data-i="rcnt"></label><select class="f" id="arc"><option value="2">2</option><option value="3">3</option></select></div></div>
+<label data-i="wr"></label><select class="f" id="awo"><option value="1">ON</option><option value="0">OFF</option></select>
+<div class="g2"><div><label data-i="wint"></label><input id="awi" type="number"></div><div><label data-i="wgoal"></label><input id="awg" type="number"></div><div><label data-i="wfrom"></label><input id="aws" type="number"></div><div><label data-i="wto"></label><input id="awe" type="number"></div></div>
+<button class="btn w" onclick="saveA()" data-i="save"></button>
+<button class="btn l w" onclick="syncT()">🕐 <span data-i="sync"></span></button>
+<button class="btn l w" onclick="admc('/dispense')">▶ <span data-i="disp"></span></button>
+<div class="lb" style="margin-top:14px" data-i="zero"></div>
+<div class="sm" style="color:var(--mu);margin-bottom:8px" data-i="zerohelp"></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">
+<button class="btn l" onclick="jog(-100)">⏪ 100</button><button class="btn l" onclick="jog(-10)">◀ 10</button>
+<button class="btn l" onclick="jog(10)">10 ▶</button><button class="btn l" onclick="jog(100)">100 ⏩</button></div>
+<button class="btn l w" onclick="jog(-1)" style="margin-bottom:6px">◀ 1 step</button>
+<button class="btn l w" onclick="jog(1)" style="margin-bottom:6px">1 step ▶</button>
+<button class="btn l w" onclick="admc('/refill')">🔄 <span data-i="refill"></span></button>
+<div class="g2" style="margin-top:10px"><input id="np" type="password" inputmode="numeric" placeholder="New PIN"><button class="btn" onclick="chPin()">PIN ✓</button></div>
+<button class="btn r w" onclick="if(confirm('Clear history?'))admc('/clearlog')" data-i="clr"></button>
+</div>
+</div>
+</div>
+
+<script>
+'use strict';
+
+const T={
+home:"Home|होम|मुख्य",cal:"Calendar|कैलेंडर|दिनदर्शिका",hist:"History|इतिहास|इतिहास",health:"Health|सेहत|आरोग्य",
+next:"Next dose|अगली खुराक|पुढील मात्रा",today:"Today's doses|आज की खुराक|आजच्या मात्रा",water:"Water|पानी|पाणी",
+drank:"I drank water|मैंने पानी पिया|मी पाणी प्यायलो",left:"Doses left|खुराक बाकी|मात्रा शिल्लक",low:"Refill soon!|जल्दी भरें!|लवकर भरा!",
+taken:"Taken|ली गई|घेतली",missed:"Missed|छूटी|चुकली",pend:"Pending|बाकी|बाकी",wait:"Take now|अभी लें|आता घ्या",
+adh:"Adherence|नियमितता|नियमितता",streak:"Day streak|दिन लगातार|दिवस सलग",conn:"Connect|कनेक्ट|कनेक्ट",
+doses:"Doses per day|दिन में खुराक|दिवसातील मात्रा",slots:"Slots|स्लॉट|स्लॉट",mwin:"Missed after (min)|छूटी मानें (मिनट)|चुकली (मिनिटे)",pname:"Patient name|मरीज़ का नाम|रुग्णाचे नाव",rgap:"Repeat reminder after|दोबारा रिमाइंडर (मिनट बाद)|पुन्हा रिमाइंडर (मिनिटांनी)",rcnt:"Repeat times|कितनी बार दोहराएँ|किती वेळा पुन्हा",hello:"Hello|नमस्ते|नमस्कार",wish:"Stay healthy today|आज स्वस्थ रहें|आज निरोगी रहा",
+wr:"Water reminder|पानी रिमाइंडर|पाणी रिमाइंडर",wint:"Every (min)|हर (मिनट)|दर (मिनिटे)",wgoal:"Goal (glasses)|लक्ष्य (गिलास)|लक्ष्य (ग्लास)",
+wfrom:"From hour|शुरू (घंटा)|सुरुवात (तास)",wto:"To hour|अंत (घंटा)|शेवट (तास)",save:"Save|सेव करें|सेव्ह करा",
+sync:"Sync phone time|फोन का समय सेट करें|फोन वेळ सेट करा",refill:"Set ZERO here + Refilled|यहीं ZERO सेट करें + भरा गया|इथे ZERO सेट करा + भरले",zero:"Align zero position|ज़ीरो पोज़िशन सेट करें|झिरो पोझिशन सेट करा",zerohelp:"Move until the empty slot is exactly under the opening, then press Set ZERO.|खाली स्लॉट को ओपनिंग के ठीक नीचे लाएँ, फिर Set ZERO दबाएँ।|रिकामा स्लॉट ओपनिंगच्या अगदी खाली आणा, मग Set ZERO दाबा.",
+disp:"Dispense now|अभी डिस्पेंस|आता डिस्पेन्स",clr:"Clear history|इतिहास मिटाएं|इतिहास पुसा",login:"Open|खोलें|उघडा",
+add:"Add|जोड़ें|जोडा",bp:"BP|बीपी|बीपी",sugar:"Sugar|शुगर|शुगर",wt:"Weight|वज़न|वजन",mood:"Mood|मूड|मूड",
+tips:"Fitness tip|फिटनेस सुझाव|फिटनेस सूचना",disc:"General tips, not medical advice.|सामान्य सुझाव, डॉक्टरी सलाह नहीं।|सर्वसाधारण सूचना, वैद्यकीय सल्ला नाही.",
+med:"Time for your medicine!|दवा का समय हो गया!|औषधाची वेळ झाली!",wnow:"Time to drink water 💧|पानी पीने का समय 💧|पाणी पिण्याची वेळ 💧",
+off:"Demo Mode|डेमो मोड|डेमो मोड",on:"Connected|कनेक्टेड|कनेक्टेड",name:"Medicine name|दवा का नाम|औषधाचे नाव",
+dose:"Dose|खुराक|मात्रा",empty:"No data|कोई डेटा नहीं|डेटा नहीं"
+};
+
+const MO=[
+"Great job! Health is wealth 💪|शाबाश! सेहत ही दौलत है 💪|शाबास! आरोग्य हीच संपत्ती 💪",
+"Dose taken on time. Keep going! 🌟|समय पर दवा ली। ऐसे ही चलें! 🌟|वेळेवर औषध घेतले. असेच चालू ठेवा! 🌟",
+"Well done! Your body thanks you ❤|बहुत बढ़िया! आपका शरीर आभारी है ❤|छान! तुमचे शरीर आभारी आहे ❤"
+];
+
+const WM=[
+"Hydrated! Well done 💧|बहुत बढ़िया! 💧|छान! 💧",
+"Great! Keep sipping through the day 💦|शाबाश! दिनभर पीते रहें 💦|शाबास! दिवसभर पीत रहा 💦"
+];
+
+const TP=[
+"Walk 20–30 minutes daily. A light walk after meals helps digestion.|रोज़ 20–30 मिनट टहलें। खाने के बाद हल्की सैर पाचन में मदद करती है।|रोज २०–३० मिनिटे चाला. जेवणानंतर हलके चालणे पचनास मदत करते.",
+"Gentle stretching for 5 minutes every morning keeps joints flexible.|रोज़ सुबह 5 मिनट हल्की स्ट्रेचिंग जोड़ों को लचीला रखती है।|रोज सकाळी ५ मिनिटे स्ट्रेचिंग सांधे लवचिक ठेवते.",
+"Sleep 7–8 hours. Good sleep helps recovery.|7–8 घंटे सोएँ। अच्छी नींद रिकवरी में मदद करती है।|७–८ तास झोपा. चांगली झोप बरे होण्यास मदत करते.",
+"Take deep breaths for 2 minutes to reduce stress.|तनाव घटाने के लिए 2 मिनट गहरी साँस लें।|ताण कमी करण्यासाठी २ मिनिटे दीर्घ श्वास घ्या.",
+"Add fruits and vegetables to every meal and cut extra salt and sugar.|हर भोजन में फल-सब्ज़ी लें, नमक-चीनी कम करें।|प्रत्येक जेवणात फळे-भाज्या घ्या, मीठ-साखर कमी करा.",
+"Climb stairs when you can. Small activity adds up.|जब हो सके सीढ़ियाँ चढ़ें। छोटी गतिविधि भी काम आती है।|शक्य तेव्हा जिने चढा. छोटी हालचालही उपयोगी.",
+"Drink a glass of water right after waking up.|उठते ही एक गिलास पानी पिएँ।|उठल्यावर लगेच एक ग्लास पाणी प्या.",
+"Take your medicine at the same time every day to build a habit.|दवा रोज़ एक ही समय पर लें, इससे आदत बनती है।|औषध रोज एकाच वेळी घ्या, सवय लागते.",
+"Get 10–15 minutes of morning sunlight for mood and bones.|मूड और हड्डियों के लिए सुबह 10–15 मिनट धूप लें।|मूड आणि हाडांसाठी सकाळी १०–१५ मिनिटे ऊन घ्या.",
+"Stand up and move for 2 minutes after every hour of sitting.|हर घंटे बैठने के बाद 2 मिनट उठकर चलें।|दर तासाभर बसल्यावर २ मिनिटे उठून चाला.",
+"Eat slowly and chew well. It helps you feel full with less food.|धीरे-धीरे और अच्छे से चबाकर खाएँ। कम खाने में पेट भरता है।|हळूहळू आणि नीट चावून खा. कमी खाण्यातही पोट भरते.",
+"Keep screens away 30 minutes before bed for better sleep.|बेहतर नींद के लिए सोने से 30 मिनट पहले स्क्रीन बंद करें।|चांगल्या झोपेसाठी झोपण्याआधी ३० मिनिटे स्क्रीन बंद करा.",
+"Stay in touch with family and friends. Good company is good medicine.|परिवार और दोस्तों से जुड़े रहें। अच्छा साथ भी दवा है।|कुटुंब आणि मित्रांशी संपर्कात राहा. चांगली संगत हेही औषध आहे.",
+"Try 10 slow shoulder rolls to release neck and upper-back tension.|गर्दन और पीठ का तनाव घटाने के लिए 10 बार कंधे धीरे घुमाएँ।|मान आणि पाठीचा ताण कमी करण्यासाठी १० वेळा खांदे हळू फिरवा.",
+"Include a handful of nuts or seeds in your day for healthy fats.|रोज़ मुट्ठी भर मेवे या बीज खाएँ, अच्छी चर्बी मिलती है।|रोज मूठभर सुकामेवा किंवा बिया खा, चांगली चरबी मिळते.",
+"Never skip a dose. If you miss one, don't double up next time unless your doctor says so.|कोई खुराक न छोड़ें। छूट जाए तो डॉक्टर के कहे बिना अगली बार दोगुनी न लें।|डोस चुकवू नका. चुकला तर डॉक्टर सांगितल्याशिवाय पुढच्या वेळी दुप्पट घेऊ नका.",
+"Keep medicines in a cool, dry place away from direct sunlight.|दवाइयाँ ठंडी, सूखी जगह पर और सीधी धूप से दूर रखें।|औषधे थंड, कोरड्या जागी आणि थेट उन्हापासून दूर ठेवा.",
+"A 5-minute balance practice, like standing on one leg, helps prevent falls.|5 मिनट संतुलन का अभ्यास, जैसे एक पैर पर खड़े होना, गिरने से बचाता है।|५ मिनिटे तोल सरावाचा, जसे एका पायावर उभे राहणे, पडण्यापासून वाचवते.",
+"Prefer home-cooked meals over packaged and fried food.|पैकेट और तले खाने की जगह घर का बना खाना चुनें।|पॅकेटबंद आणि तळलेल्या पदार्थांऐवजी घरचे जेवण निवडा.",
+"Smile and laugh often. A good mood supports a healthy heart.|खूब मुस्कुराएँ और हँसें। अच्छा मूड दिल के लिए अच्छा है।|खूप हसा आणि हसवा. चांगला मूड हृदयासाठी चांगला.",
+"Sip water through the day instead of drinking a lot at once.|एक साथ ज़्यादा पानी की जगह दिनभर घूँट-घूँट पिएँ।|एकदम खूप पाण्याऐवजी दिवसभर थोडे थोडे प्या.",
+"Do ankle circles and gentle leg lifts while sitting to keep blood flowing.|बैठे-बैठे टखने घुमाएँ और पैर हल्के उठाएँ, रक्त संचार बना रहता है।|बसल्या बसल्या घोटे फिरवा आणि पाय हलके उचला, रक्ताभिसरण चांगले राहते.",
+"Have dinner 2–3 hours before sleeping for better digestion.|बेहतर पाचन के लिए सोने से 2–3 घंटे पहले खाना खाएँ।|चांगल्या पचनासाठी झोपण्याच्या २–३ तास आधी जेवा.",
+"Spend a few minutes in a quiet place and just breathe. It calms the mind.|कुछ मिनट शांत जगह बैठकर बस साँस पर ध्यान दें, मन शांत होता है।|काही मिनिटे शांत जागी बसून फक्त श्वासावर लक्ष द्या, मन शांत होते.",
+"Choose whole grains like oats, ragi or brown rice more often.|ओट्स, रागी या ब्राउन राइस जैसे साबुत अनाज ज़्यादा खाएँ।|ओट्स, नाचणी किंवा ब्राऊन राईस असे पूर्ण धान्य जास्त खा.",
+"Check your posture. Keep your back straight and shoulders relaxed.|अपनी बैठने की मुद्रा देखें। पीठ सीधी और कंधे ढीले रखें।|बसण्याची पद्धत तपासा. पाठ सरळ आणि खांदे सैल ठेवा.",
+"Write down 3 things you are thankful for today.|आज की 3 बातें लिखें जिनके लिए आप आभारी हैं।|आज ज्यासाठी कृतज्ञ आहात अशा ३ गोष्टी लिहा.",
+"Use light hand weights or a water bottle for gentle arm exercises.|हल्के वज़न या पानी की बोतल से बाँहों की हल्की कसरत करें।|हलकी वजने किंवा पाण्याची बाटली घेऊन हातांचा हलका व्यायाम करा.",
+"Limit tea and coffee late in the day so your sleep stays sound.|नींद अच्छी रखने के लिए शाम के बाद चाय-कॉफ़ी कम करें।|झोप चांगली राहण्यासाठी संध्याकाळनंतर चहा-कॉफी कमी घ्या.",
+"Eat a banana, curd or other potassium-rich food to support healthy blood pressure.|केला, दही जैसे पोटैशियम वाले आहार ब्लड प्रेशर के लिए अच्छे हैं।|केळी, दही असे पोटॅशियमयुक्त पदार्थ रक्तदाबासाठी चांगले.",
+"Wash your hands often. It is the simplest way to avoid infections.|हाथ बार-बार धोएँ। संक्रमण से बचने का सबसे आसान तरीका है।|हात वारंवार धुवा. संसर्ग टाळण्याचा सर्वात सोपा मार्ग.",
+"Take a short evening walk and enjoy the fresh air.|शाम को थोड़ी देर टहलें और ताज़ी हवा का आनंद लें।|संध्याकाळी थोडे फिरा आणि ताज्या हवेचा आनंद घ्या.",
+"Keep a regular sleep time, even on weekends.|छुट्टी के दिन भी सोने का समय नियमित रखें।|सुट्टीच्या दिवशीही झोपेची वेळ नियमित ठेवा.",
+"Share how you feel with someone you trust. Talking helps.|जो भरोसेमंद हो उससे अपनी बात साझा करें। बात करने से हल्का लगता है।|विश्वासू व्यक्तीशी मन मोकळे करा. बोलल्याने हलके वाटते.",
+"Do a few seated or wall push-ups for easy upper-body strength.|आसान ताकत के लिए कुर्सी या दीवार पर थोड़े पुश-अप करें।|सोप्या ताकदीसाठी खुर्ची किंवा भिंतीवर थोडे पुश-अप्स करा.",
+"Check that you have enough medicines left before they run out.|दवाइयाँ खत्म होने से पहले देख लें कि पर्याप्त स्टॉक है या नहीं।|औषधे संपण्याआधी पुरेसा साठा आहे का ते तपासा."
+];
+
+const $=id=>document.getElementById(id);
+/* Fitness tip: har reload/reopen par naya (pichla wala repeat nahi hoga), tip dabane par bhi badlega */
+let TI=-1;
+function newTip(show){
+ let last=Number(localStorage.lastTip);if(isNaN(last))last=-1;
+ let n;do{n=Math.floor(Math.random()*TP.length)}while(n===last&&TP.length>1);
+ TI=n;try{localStorage.lastTip=String(n)}catch(e){}
+ if(show&&$('tp'))$('tp').textContent=TP[TI].split('|')[li];
+}
+const LS=localStorage;
+const pd=x=>String(x).padStart(2,'0');
+
+let li=Number(LS.lang||0),S=null,LOG=[],pin='1234',lv=-1,pa=-1,pw=0,cm=new Date(),first=1,sel=null,isDemo=false,live=false,fails=0;
+
+const t=k=>{
+ const a=(T[k]||k).split('|');
+ return a[li]||a[0];
+};
+
+const pk=a=>{
+ const s=a[Math.floor(Math.random()*a.length)].split('|');
+ return s[li]||s[0];
+};
+
+const ipu=()=> 'http://'+($('ip').value.trim()||'192.168.4.1');
+
+async function jf(path){
+ const ctl=new AbortController();
+ const to=setTimeout(()=>ctl.abort(),6000);
+ try{
+  const r=await fetch(ipu()+path,{signal:ctl.signal});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return await r.json();
+ }finally{clearTimeout(to)}
+}
+
+function loadMock(){
+ isDemo=true;
+ const now=new Date();
+ const dt=''+now.getFullYear()+pd(now.getMonth()+1)+pd(now.getDate());
+ const tm=pd(now.getHours())+':'+pd(now.getMinutes());
+
+ S={
+  dt,tm,n:3,
+  d:[
+   {t:'08:00',nm:'Paracetamol'},
+   {t:'14:00',nm:'Vitamin D3'},
+   {t:'20:30',nm:'Omega 3'}
+  ],
+  wc:5,wg:8,sl:16,lf:11,a:-1,wd:0,lv:1,mw:30,wo:1,wi:60,ws:8,we:21
+ };
+
+ const saved=LS.medboxLog;
+ if(saved){
+  try{LOG=JSON.parse(saved)||[]}catch(e){LOG=[]}
+ }else{
+  LOG=[
+   {d:dt,tm:'0805',y:'T',i:0},
+   {d:dt,tm:'1030',y:'W',i:0},
+   {d:dt,tm:'1402',y:'T',i:1},
+   {d:dt,tm:'1530',y:'W',i:0}
+  ];
+  saveLocalLog();
+ }
+
+ $('dt').className='dot ok';
+ $('cs').textContent=t('off');
+ all();
+}
+
+function saveLocalLog(){LS.medboxLog=JSON.stringify(LOG.slice(-300));}
+
+function greet(){
+ const n=(LS.pname||'').trim();
+ $('gr').innerHTML=t('hello')+(n?', '+n.replace(/[<>&]/g,''):'')+' 👋<small>'+t('wish')+'</small>';
+}
+
+function cacheS(){
+ try{const c=Object.assign({},S);c.a=-1;c.wd=0;LS.medboxS=JSON.stringify(c);}catch(e){}
+}
+
+function setL(v){
+ li=Number(v);
+ LS.lang=String(v);
+ $('lg').value=String(v);
+ document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ greet();
+ $('cs').textContent=t(isDemo?'off':(S?'on':'off'));
+ if(S)all();
+}
+
+function toast(m){
+ const e=$('ts');
+ e.textContent=m;
+ e.classList.add('on');
+ clearTimeout(toast.h);
+ toast.h=setTimeout(()=>e.classList.remove('on'),3500);
+}
+
+function notify(m){
+ toast(m);
+ try{
+  if('Notification' in window && Notification.permission==='granted')new Notification('MedBox',{body:m});
+  if(navigator.vibrate)navigator.vibrate([200,100,200]);
+ }catch(e){}
+}
+
+function tab(i){
+ document.querySelectorAll('.tab').forEach((e,j)=>e.classList.toggle('on',i===j));
+ document.querySelectorAll('nav button').forEach((e,j)=>e.classList.toggle('on',i===j));
+ try{
+  if('Notification' in window && Notification.permission==='default')Notification.requestPermission();
+ }catch(e){}
+}
+
+function connect(showToast=true){
+ if(showToast)toast('Connecting...');
+ jf('/status').then(res=>{
+  isDemo=false;
+  fails=0;
+  h(res);
+  if(showToast)toast(t('on'));
+ }).catch(()=>{
+  if(!S)loadMock();
+  else if(!live)isDemo=true; // saved data dikh raha hai par ESP32 connected nahi: offline/demo mode
+  if(showToast)toast(t('off'));
+ });
+}
+
+function h(s){
+ S=s;
+ isDemo=false;
+ live=true;
+ cacheS();
+ $('dt').className='dot ok';
+ $('cs').textContent=t('on');
+
+ if(s.lv!==lv){
+  lv=s.lv;
+  loadLog();
+ }
+
+ if(s.a>=0 && pa<0 && s.d && s.d[s.a]){
+  notify(t('med')+' '+(s.d[s.a].nm||''));
+ }
+ pa=s.a;
+
+ if(s.wd && !pw)notify(t('wnow'));
+ pw=s.wd;
+ all();
+}
+
+function loadLog(){
+ fetch(ipu()+'/log').then(r=>r.text()).then(x=>{
+  const oldLength=LOG.length;
+  LOG=x.trim().split('\n').filter(Boolean).map(l=>({
+   d:l.slice(0,8),
+   tm:l.slice(9,13),
+   y:l[14],
+   i:Number(l[16])||0
+  }));
+
+  if(!first && LOG.length>oldLength){
+   const l=LOG[LOG.length-1];
+   if(l.y==='T')notify(pk(MO));
+   if(l.y==='W')toast(pk(WM));
+  }
+
+  first=0;
+  saveLocalLog();
+  all();
+ }).catch(()=>{});
+}
+
+function all(){
+ if(!S)return;
+ snap();
+ home();
+ cal();
+ hist();
+ hv();
+}
+
+function home(){
+ const s=S;
+ $('clk').textContent=s.tm||'--:--';
+
+ const yr=Number(String(s.dt).slice(0,4));
+ const mo=Number(String(s.dt).slice(4,6))-1;
+ const da=Number(String(s.dt).slice(6));
+
+ const date=new Date(yr,mo,da);
+ $('dtx').textContent=date.toLocaleDateString(['en','hi','mr'][li],{
+  weekday:'long',day:'numeric',month:'long'
+ });
+
+ $('al').classList.toggle('on',s.a>=0);
+ if(s.a>=0 && s.d && s.d[s.a]){
+  $('alt').textContent='🔔 '+t('med')+' '+(s.d[s.a].nm||'');
+ }
+
+ const parts=String(s.tm||'00:00').split(':').map(Number);
+ const H=parts[0]||0,M=parts[1]||0,nw=H*60+M;
+ let best=1e9,bi=0;
+
+ for(let i=0;i<(s.n||0);i++){
+  const p=String(s.d[i].t||'00:00').split(':').map(Number);
+  let df=(p[0]||0)*60+(p[1]||0)-nw;
+  if(df<=0)df+=1440;
+  if(df<best){best=df;bi=i}
+ }
+
+ if(s.d && s.d[bi]){
+  $('nx').textContent=s.d[bi].t+(s.d[bi].nm?' · '+s.d[bi].nm:'');
+  $('nx2').textContent='⏱ '+Math.floor(best/60)+'h '+best%60+'m';
+ }
+
+ let x='';
+ for(let i=0;i<(s.n||0);i++){
+  const e=LOG.filter(l=>l.d==s.dt&&l.i===i&&'TMD'.includes(l.y)).pop();
+  const k=e?e.y:'P';
+  const label={T:'taken',M:'missed',D:'wait',P:'pend'}[k];
+
+  x+=`<div class="dose"><span style="font-size:1.4rem">💊</span>
+  <div><b>${s.d[i].t}</b><div class="sm" style="color:var(--mu)">${s.d[i].nm||t('dose')+' '+(i+1)}</div></div>
+  <span class="bd ${k}">${t(label)}</span></div>`;
+ }
+ $('td').innerHTML=x||'<div class="sm">'+t('empty')+'</div>';
+
+ const wc=Number(s.wc)||0,wg=Math.max(1,Number(s.wg)||8);
+ $('wc').textContent=wc+' / '+wg;
+ let g='';
+ for(let i=0;i<wg;i++)g+=`<span class="${i<wc?'f':''}">💧</span>`;
+ $('gl').innerHTML=g;
+
+ const total=Math.max(1,Number(s.sl)-1);
+ const left=Math.max(0,Number(s.lf)||0);
+ $('lf').textContent=left+' / '+total;
+ $('lb').style.width=Math.min(100,Math.max(0,left/total*100))+'%';
+ $('lw').textContent=left<=2?'⚠ '+t('low'):'';
+
+ if(TI<0)newTip(0);
+ $('tp').textContent=TP[TI].split('|')[li];
+}
+
+function ds(){
+ const m={};
+ LOG.forEach(l=>{
+  const o=m[l.d]=m[l.d]||{T:0,M:0,D:0,W:0};
+  if(o[l.y]!=null)o[l.y]++;
+ });
+ return m;
+}
+
+function mv(n){
+ cm.setMonth(cm.getMonth()+n);
+ cal();
+}
+
+function cal(){
+ const m=ds(),y=cm.getFullYear(),mo=cm.getMonth(),L=['en','hi','mr'][li];
+ $('mt').textContent=cm.toLocaleDateString(L,{month:'long',year:'numeric'});
+
+ let x='';
+ for(let i=0;i<7;i++)x+='<b>'+new Date(2023,0,1+i).toLocaleDateString(L,{weekday:'narrow'})+'</b>';
+
+ const f=new Date(y,mo,1).getDay();
+ const dn=new Date(y,mo+1,0).getDate();
+
+ for(let i=0;i<f;i++)x+='<div></div>';
+
+ for(let d=1;d<=dn;d++){
+  const k=''+y+pd(mo+1)+pd(d),o=m[k];
+  const c=o?(o.M&&!o.T?'M':(o.M||o.D?'H':(o.T?'T':''))):'';
+  x+=`<div class="cd ${c} ${S&&k==S.dt?'t':''}" onclick="sel='${k}';det()">${d}<small>${c==='T'?'✅':c==='M'?'❌':c==='H'?'⚠':''}</small></div>`;
+ }
+
+ $('cg').innerHTML=x;
+ det();
+}
+
+function det(){
+ const k=sel||(S&&S.dt);
+ if(!k)return;
+
+ const e=LOG.filter(l=>l.d==k);
+ $('cdet').innerHTML='<div class="lb">'+k.slice(6)+'/'+k.slice(4,6)+'/'+k.slice(0,4)+'</div>'+
+ (e.length?e.map(ev).join(''):'<div class="sm" style="color:var(--mu)">'+t('empty')+'</div>');
+}
+
+/* Medicine name har entry ke saath yaad rakho (baad me naam badle to purani history na bigde) */
+let NM={};try{NM=JSON.parse(LS.medboxNM||'{}')||{}}catch(e){NM={}}
+const nk=l=>l.d+l.tm+l.y+l.i;
+function snap(){
+ if(!S||!S.d)return;
+ let ch=false;
+ LOG.forEach(l=>{
+  if(l.y==='W')return;
+  const k=nk(l);
+  if(NM[k]===undefined){const d=S.d[l.i];NM[k]=(d&&d.nm)||'';ch=true}
+ });
+ if(ch){
+  const ks=Object.keys(NM);
+  if(ks.length>600)ks.slice(0,ks.length-600).forEach(k=>delete NM[k]);
+  try{LS.medboxNM=JSON.stringify(NM)}catch(e){}
+ }
+}
+function mname(l){
+ if(l.y==='W')return '';
+ const n=NM[nk(l)];
+ if(n)return n;
+ const d=S&&S.d&&S.d[l.i];
+ return (d&&d.nm)||(t('dose')+' '+(l.i+1));
+}
+
+function ev(l){
+ const ic={T:'✅',M:'❌',D:'💊',W:'💧'}[l.y]||'•';
+ const nm={T:'taken',M:'missed',D:'wait'}[l.y];
+ return `<div class="ev"><span>${ic}</span><span>${nm?t(nm):t('water')}${l.y!=='W'?` <b style="color:var(--p)">· 💊 ${mname(l).replace(/[<>&]/g,'')}</b>`:''}</span><small>${String(l.tm).slice(0,2)}:${String(l.tm).slice(2)}</small></div>`;
+}
+
+function hist(){
+ const m=ds();
+ let Tn=0,Mn=0;
+ LOG.forEach(l=>{if(l.y==='T')Tn++;if(l.y==='M')Mn++});
+ $('ad').textContent=(Tn+Mn)?Math.round(Tn/(Tn+Mn)*100)+'%':'--';
+
+ let sk=0;
+ if(S){
+  const d=new Date(Number(S.dt.slice(0,4)),Number(S.dt.slice(4,6))-1,Number(S.dt.slice(6)));
+  for(let i=0;i<400;i++){
+   const k=''+d.getFullYear()+pd(d.getMonth()+1)+pd(d.getDate()),o=m[k];
+   if(o&&o.T&&!o.M)sk++;
+   else if(i>0||o)break;
+   d.setDate(d.getDate()-1);
+  }
+ }
+ $('sk').textContent=sk||1;
+
+ let w='';
+ for(let i=6;i>=0;i--){
+  const q=new Date(Date.now()-i*86400000);
+  const k=''+q.getFullYear()+pd(q.getMonth()+1)+pd(q.getDate());
+  w+=`<div style="height:${Math.min(100,(m[k]?m[k].T:0)*25)+10}%"></div>`;
+ }
+ $('wk').innerHTML=w;
+
+ $('hl').innerHTML=LOG.slice(-40).reverse().map(l=>
+  `<div class="ev"><small style="margin:0">${l.d.slice(6)}/${l.d.slice(4,6)}</small>${ev(l)}</div>`
+ ).join('')||t('empty');
+}
+
+function drink(){
+ if(isDemo){
+  S.wc=Math.min(Number(S.wg)||8,(Number(S.wc)||0)+1);
+  LOG.push({d:S.dt,tm:pd(new Date().getHours())+pd(new Date().getMinutes()),y:'W',i:0});
+  saveLocalLog();
+  toast(pk(WM));
+  all();
+  return;
+ }
+ jf('/water').then(h).catch(()=>toast(t('off')));
+}
+
+function ack(){
+ if(isDemo){
+  if(S.a>=0){
+   LOG.push({d:S.dt,tm:pd(new Date().getHours())+pd(new Date().getMinutes()),y:'T',i:S.a});
+  }
+  S.a=-1;
+  saveLocalLog();
+  toast(pk(MO));
+  all();
+  return;
+ }
+ jf('/taken').then(h).catch(()=>toast(t('off')));
+}
+
+/* Health */
+const HL=()=>{try{return JSON.parse(LS.hl||'[]')}catch(e){return[]}};
+
+function addH(){
+ const a=HL();
+ a.push({
+  d:new Date().toISOString().slice(0,10),
+  b:$('hb').value.trim(),
+  s:$('hs').value.trim(),
+  w:$('hw').value.trim(),
+  m:$('hm').value
+ });
+ LS.hl=JSON.stringify(a.slice(-60));
+ ['hb','hs','hw'].forEach(i=>$(i).value='');
+ hv();
+ toast('✓');
+}
+
+function sp(a,c){
+ a=a.filter(x=>!isNaN(x));
+ if(a.length<2)return'';
+ const mn=Math.min(...a),mx=Math.max(...a)||1,r=mx-mn||1;
+ return `<svg viewBox="0 0 100 30" style="width:100%;height:46px"><polyline fill="none" stroke="${c}" stroke-width="2" points="${a.map((v,i)=>(i/(a.length-1)*100)+','+(28-(v-mn)/r*26)).join(' ')}"/></svg>`;
+}
+
+function hv(){
+ const a=HL();
+ if(!a.length){$('hv').textContent=t('empty');return}
+ $('hv').innerHTML=
+ `<div class="lb">${t('bp')}</div>${sp(a.map(x=>parseFloat(x.b)),'#ef4444')}
+ <div class="lb">${t('sugar')}</div>${sp(a.map(x=>parseFloat(x.s)),'#f59e0b')}
+ <div class="lb">${t('wt')}</div>${sp(a.map(x=>parseFloat(x.w)),'#5b6cf2')}`+
+ a.slice(-8).reverse().map(x=>`<div class="ev"><span>${x.m}</span><span>${x.b||'-'} · ${x.s||'-'} · ${x.w||'-'}</span><small>${x.d.slice(5)}</small></div>`).join('');
+}
+
+/* Admin */
+function openA(){
+ $('md').classList.add('on');
+ // Har baar PIN puchho (pin variable me default '1234' hota hai, isliye usse check nahi karna)
+ $('lgn').style.display='block';
+ $('adm').style.display='none';
+ $('pn').value='';
+ setTimeout(()=>$('pn').focus(),100);
+}
+
+function login(){
+ const p=$('pn').value.trim();
+
+ if(isDemo){
+  if(p!=='1234'){
+   toast('Demo PIN: 1234');
+   return;
+  }
+  pin=p||'1234';
+  $('lgn').style.display='none';
+  $('adm').style.display='block';
+  popA();
+  toast('✓');
+  return;
+ }
+
+ fetch(ipu()+'/config?pin='+encodeURIComponent(p))
+ .then(r=>{if(!r.ok)throw new Error('Invalid PIN');return r.json()})
+ .then(cfg=>{
+  pin=p;
+  $('lgn').style.display='none';
+  $('adm').style.display='block';
+  popA(cfg);
+  toast('✓');
+ })
+ .catch(()=>toast('Invalid PIN / Offline'));
+}
+
+function popA(c){
+ const s=c||S||{};
+ if(s.n)$('an').value=s.n;
+ adRows();
+
+ if(s.d){
+  s.d.forEach((x,i)=>{
+   if($('dt'+i))$('dt'+i).value=x.t||'08:00';
+   if($('dn'+i))$('dn'+i).value=x.nm||'';
+  });
+ }
+
+ if(s.sl!=null)$('asl').value=s.sl;
+ if(s.mw!=null)$('amw').value=s.mw;
+ $('apn').value=LS.pname||'';
+ $('arg').value=String(s.rg||LS.rg||10);
+ $('arc').value=String(s.rc||LS.rc||2);
+ if(s.wo!=null)$('awo').value=s.wo;
+ if(s.wi!=null)$('awi').value=s.wi;
+ if(s.wg!=null)$('awg').value=s.wg;
+ if(s.ws!=null)$('aws').value=s.ws;
+ if(s.we!=null)$('awe').value=s.we;
+}
+
+function adRows(){
+ const n=Number($('an').value);
+ const old=[];
+
+ for(let i=0;i<4;i++){
+  const ti=$('dt'+i),ni=$('dn'+i);
+  if(ti)old.push({t:ti.value,nm:ni?ni.value:''});
+ }
+
+ let x='';
+ for(let i=0;i<n;i++){
+  const d=(S&&S.d&&S.d[i])||{t:'08:00',nm:''};
+  const vt=old[i]?old[i].t:(d.t||'08:00');
+  const vn=old[i]?old[i].nm:(d.nm||'');
+  x+=`<div class="g2" style="margin-top:6px">
+  <input type="time" id="dt${i}" value="${vt}">
+  <input id="dn${i}" placeholder="${t('name')} ${i+1}" value="${vn}">
+  </div>`;
+ }
+ $('ar').innerHTML=x;
+}
+
+function saveA(){
+ const n=Number($('an').value);
+ const d=[];
+
+ for(let i=0;i<n;i++){
+  d.push({
+   t:$('dt'+i)?$('dt'+i).value:'08:00',
+   nm:$('dn'+i)?$('dn'+i).value.trim():''
+  });
+ }
+
+ const cfg={
+  n,
+  d,
+  sl:Number($('asl').value)||16,
+  mw:Number($('amw').value)||30,
+  wo:Number($('awo').value)||0,
+  wi:Number($('awi').value)||60,
+  wg:Number($('awg').value)||8,
+  ws:Number($('aws').value)||8,
+  we:Number($('awe').value)||21,
+  rg:Number($('arg').value)||10,
+  rc:Number($('arc').value)||2,
+  pn:$('apn').value.trim()
+ };
+ LS.pname=cfg.pn;LS.rg=String(cfg.rg);LS.rc=String(cfg.rc);
+ greet();
+
+ if(isDemo){
+  Object.assign(S,cfg);
+  S.a=-1;
+  cacheS();
+  toast('✓ Saved (Demo)');
+  $('md').classList.remove('on');
+  all();
+  return;
+ }
+
+ fetch(ipu()+'/config?pin='+encodeURIComponent(pin),{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(cfg)
+ })
+ .then(r=>{if(!r.ok)throw new Error('Save failed');return r.json()})
+ .then(res=>{
+  toast('✓ Saved');
+  $('md').classList.remove('on');
+  if(res&&res.status)h(res);else connect(false);
+ })
+ .catch(()=>toast('Save failed'));
+}
+
+function syncT(){
+ if(isDemo){
+  toast('Time synced ✓ (Demo)');
+  return;
+ }
+
+ const n=new Date();
+ const q=new URLSearchParams({
+  pin,
+  y:n.getFullYear(),
+  m:n.getMonth()+1,
+  d:n.getDate(),
+  hr:n.getHours(),
+  min:n.getMinutes(),
+  sec:n.getSeconds(),
+  epoch:Math.floor(Date.now()/1000)
+ });
+
+ fetch(ipu()+'/synctime?'+q)
+ .then(r=>{if(!r.ok)throw new Error('Sync failed');return r.json()})
+ .then(s=>{toast('Time synced ✓');h(s)})
+ .catch(()=>toast('Sync failed'));
+}
+
+function admc(p){
+ if(isDemo){
+  if(p==='/clearlog'){
+   LOG=[];
+   saveLocalLog();
+   all();
+  }
+  toast('✓ (Demo)');
+  return;
+ }
+
+ const u=ipu()+p+(p.includes('?')?'&':'?')+'pin='+encodeURIComponent(pin);
+ fetch(u)
+ .then(r=>{if(!r.ok)throw new Error('Failed');return r.json()})
+ .then(s=>{
+  toast('✓');
+  if(p==='/clearlog'){LOG=[];all()}else h(s);
+ })
+ .catch(()=>toast('Failed'));
+}
+
+function chPin(){
+ const np=$('np').value.trim();
+ if(!/^\d{4,}$/.test(np)){toast('PIN must be 4+ digits');return}
+
+ if(isDemo){
+  pin=np;
+  toast('PIN changed ✓ (Demo)');
+  $('np').value='';
+  return;
+ }
+
+ fetch(ipu()+'/setpin?pin='+encodeURIComponent(pin)+'&new='+encodeURIComponent(np))
+ .then(r=>{if(!r.ok)throw new Error('PIN change failed');toast('PIN changed ✓');pin=np;$('np').value=''})
+ .catch(()=>toast('PIN change failed'));
+}
+
+/* Keep the clock fresh even when the ESP32 is not connected. */
+setInterval(()=>{
+ if(S&&S.tm){
+  const now=new Date();
+  const current=pd(now.getHours())+':'+pd(now.getMinutes());
+  if(isDemo){
+   S.tm=current;
+   home();
+  }
+ }
+},1000);
+
+function jog(n){
+ if(isDemo||!live){toast(t('off'));return}
+ jf('/jog?pin='+encodeURIComponent(pin)+'&n='+n).then(r=>{if(r&&r.status)h(r)}).catch(()=>toast(t('off')));
+}
+
+/* Live sync: har 3 sec ESP32 se /status. Offline tabhi dikhao jab 3 baar lagatar fail ho */
+let polling=false,lastS='';
+setInterval(()=>{
+ if(polling||document.hidden)return;
+ polling=true;
+ const ctl=new AbortController();
+ const to=setTimeout(()=>ctl.abort(),5000);
+ fetch(ipu()+'/status',{signal:ctl.signal})
+ .then(r=>{if(!r.ok)throw new Error('HTTP');return r.json()})
+ .then(res=>{
+  fails=0;
+  const k=JSON.stringify(res);
+  if(k!==lastS||!live||isDemo){lastS=k;h(res)}
+ })
+ .catch(()=>{
+  fails++;
+  if(fails>=3){
+   if(live){live=false;$('dt').className='dot';$('cs').textContent='● Reconnecting...'}
+  }
+ })
+ .finally(()=>{clearTimeout(to);polling=false});
+},3000);
+
+/* Initialisation */
+if(location.hostname && location.hostname!=='localhost' && location.hostname!=='127.0.0.1'){
+ $('ip').value=location.hostname;
+}
+
+try{
+ const cs=LS.medboxS;
+ if(cs){S=JSON.parse(cs);try{LOG=JSON.parse(LS.medboxLog||'[]')||[]}catch(e){LOG=[]}$('dt').className='dot';}
+}catch(e){S=null}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+setL(li);
+if(S){$('cs').textContent=t('off');all();}
+connect(false);
+</script>
+</body>
+</html>
